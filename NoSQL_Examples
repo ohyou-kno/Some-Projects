@@ -1,0 +1,75 @@
+[
+  {
+    $unwind:
+           {
+        path: "$grades"
+      }
+  },
+  {
+    $group:
+           {
+        _id: "$borough",
+        averageScore: {
+          $avg: "$grades.score"
+        }
+      }
+  },
+  {
+    $sort:
+            {
+        averageScore: 1
+      }
+  },
+  {
+    $project:
+      {
+        _id: 0,
+        borough: "$_id",
+        averageScore: 1
+      }
+  }
+]
+
+
+
+[
+  {
+    $unwind:
+      {
+        path: "$grades"
+      }
+  },
+  {
+    $match:
+      {
+        "grades.grade": "A"
+      }
+  },
+  {
+    $group:
+      {
+        _id: "$address.zipcode",
+        totalA: {
+          $sum: 1
+        }
+      }
+  },
+  {
+    $sort:
+      {
+        totalA: -1
+      }
+  },
+  {
+    $limit:
+      5
+  },
+  {
+    $project:
+      {
+        _id: 0,
+        zipcode: "$_id",
+        totalA: "$totalA"
+      }
+  }
+]
